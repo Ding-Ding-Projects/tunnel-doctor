@@ -1,0 +1,60 @@
+name: Build appliance image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'appliance/**'
+      - '.github/workflows/appliance.yml'
+
+permissions:
+  contents: read
+
+env:
+  LINUXKIT_VERSION: v1.8.2
+  # sha256 of linuxkit-linux-amd64 from the v1.8.2 release.
+  LINUXKIT_SHA256: 18b97b0d83401dd88ade14f207eb26358d9a7fde5d3dc4b1e24bd8faf087be6f
+
+jobs:
+  appliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LinuxKit (pinned and verified)
+        run: |
+          curl -fsSL -o linuxkit "https://github.com/linuxkit/linuxkit/releases/download/${LINUXKIT_VERSION}/linuxkit-linux-amd64"
+          echo "${LINUXKIT_SHA256}  linuxkit" | sha256sum -c -
+          chmod +x linuxkit
+          sudo mv linuxkit /usr/local/bin/linuxkit
+
+      - name: Build images
+        run: |
+          mkdir -p appliance/build
+          linuxkit build --format iso-efi --dir appliance/build appliance/tunnel-doctor.yml
+          linuxkit build --format raw-efi --dir appliance/build appliance/tunnel-doctor.yml
+          ls -l appliance/build
+
+      - name: Boot smoke check of the ISO
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 ovmf
+          qemu-system-x86_64 -nographic -m 1024 -machine q35 \
+            -bios /usr/share/ovmf/OVMF.fd \
+            -cdrom appliance/build/tunnel-doctor-efi.iso \
+            -net nic -net user,hostfwd=tcp::8080-:8080 \
+            > qemu.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/api/health; then echo; echo "appliance answered after ~$((i*5))s"; exit 0; fi
+            sleep 5
+          done
+          echo "appliance did not answer in 300s"; tail -n 60 qemu.log; exit 1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tunnel-doctor-appliance
+          path: |
+            appliance/build/tunnel-doctor-efi.iso
+            appliance/build/tunnel-doctor-efi.img
+          if-no-files-found: error
