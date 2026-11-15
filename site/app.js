@@ -39,7 +39,7 @@ const bi = (render) => {
 };
 const STATUS = { en: { pass: 'Pass', warn: 'Warning', fail: 'Fail', error: 'Error', skip: 'Skipped', info: 'Route' }, zh: { pass: '通過', warn: '警告', fail: '失敗', error: '錯誤', skip: '跳過', info: '路由' } };
 const byId = (id) => ARTICLES.find((a) => a.id === id);
-const cat = (id) => CATEGORIES.find((c) => c.id === id);
+const categoryById = (id) => CATEGORIES.find((c) => c.id === id);
 const lt = (obj) => langs().map((lc) => obj[lc]).join(' · ');
 const live = (msg) => { const l = $('#live'); if (l) l.textContent = msg; };
 
@@ -251,9 +251,9 @@ function renderMeta() {
 fetch('build-meta.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).catch(() => null).then((m) => { buildMeta = m; renderMeta(); });
 
 function pageHome() {
-  const checks = ARTICLES.filter((a) => a.cat === 'checks');
-  const fixes = ARTICLES.filter((a) => a.cat === 'fixes');
-  const runs = ARTICLES.filter((a) => a.cat === 'run');
+  const checks = ARTICLES.filter((a) => a.category === 'checks');
+  const fixes = ARTICLES.filter((a) => a.category === 'fixes');
+  const runs = ARTICLES.filter((a) => a.category === 'run');
   const lead = (a, lc) => esc(pick(a.lead[lc], lc));
   const card = (a) => `<article class="card"><h3>${em(a.icon)}${langs().map((lc) => `<span lang="${LANGATTR[lc]}">${esc(a.title[lc])}</span>`).join('<span aria-hidden="true"> · </span>')}</h3>${langs().map((lc) => `<p lang="${LANGATTR[lc]}">${lead(a, lc)}</p>`).join('')}<a class="go" href="#/a/${a.id}">${u('readArticle')}<span class="sr-only">: ${esc(a.title.en)}</span></a></article>`;
   const illus = `<figure class="illus"><div class="head">${u('illusTitle')}</div><div class="body"><span class="mono">ha.example.com CNAME tunnel<br>AAAA fd10:aec2:5dae:: (private)</span><span>${u('illusFix')}</span><span class="fakebtn" aria-hidden="true">${uPlain('illusBtn')}</span></div><figcaption>${u('illustration')}</figcaption></figure>`;
@@ -288,7 +288,7 @@ function renderBlock(b, lc) {
 }
 
 function pageArticle(a) {
-  const c = cat(a.cat);
+  const c = categoryById(a.category);
   const sections = a.sections.map((s) => `<section class="art-section" id="sec-${s.id}" aria-labelledby="h-${s.id}-${langs()[0]}">${bi((lc) => `<h2 id="h-${s.id}-${lc}">${esc(s.h[lc])}</h2>${s.blocks.map((b) => renderBlock(b, lc)).join('')}`)}</section>`).join('');
   const related = a.related.map((id) => byId(id)).filter(Boolean).map((r) => `<li><a href="#/a/${r.id}">${em(r.icon)}<span>${langs().map((lc) => esc(r.title[lc])).join(' · ')}</span></a></li>`).join('');
   return `<article class="wrap article" aria-labelledby="art-title-${langs()[0]}">
@@ -301,13 +301,13 @@ function pageArticle(a) {
 
 function pageDocs() {
   return `<div class="wrap article"><div class="page-head"><h1>${u('docsTitle')}</h1>${langs().map((lc) => `<p class="lead-text" lang="${LANGATTR[lc]}">${esc(ui('docsIntro', lc))}</p>`).join('')}</div>
-  ${CATEGORIES.map((c) => `<section class="art-section" aria-labelledby="c-${c.id}"><h2 id="c-${c.id}"><a href="#/docs/${c.id}">${em(c.icon)}${langs().map((lc) => esc(c.title[lc])).join(' · ')}</a></h2>${langs().map((lc) => `<p lang="${LANGATTR[lc]}">${esc(c.desc[lc])}</p>`).join('')}${articleList(ARTICLES.filter((a) => a.cat === c.id))}</section>`).join('')}</div>`;
+  ${CATEGORIES.map((c) => `<section class="art-section" aria-labelledby="c-${c.id}"><h2 id="c-${c.id}"><a href="#/docs/${c.id}">${em(c.icon)}${langs().map((lc) => esc(c.title[lc])).join(' · ')}</a></h2>${langs().map((lc) => `<p lang="${LANGATTR[lc]}">${esc(c.desc[lc])}</p>`).join('')}${articleList(ARTICLES.filter((a) => a.category === c.id))}</section>`).join('')}</div>`;
 }
 function articleList(list) {
   return `<ul class="list">${list.map((a) => `<li><a class="row" href="#/a/${a.id}"><span class="icon" aria-hidden="true">${settings.emoji ? a.icon : ''}</span><span><span class="t">${langs().map((lc) => esc(a.title[lc])).join(' · ')}</span><br>${langs().map((lc) => `<span class="d" lang="${LANGATTR[lc]}">${esc(pick(a.lead[lc], lc))}</span>`).join('<br>')}</span></a></li>`).join('')}</ul>`;
 }
 function pageCategory(c) {
-  return `<div class="wrap article"><nav class="crumbs" aria-label="Breadcrumb"><a href="#/docs">${u('docsTitle')}</a></nav><div class="page-head"><h1>${em(c.icon)}${langs().map((lc) => `<span lang="${LANGATTR[lc]}" style="display:block">${esc(c.title[lc])}</span>`).join('')}</h1>${langs().map((lc) => `<p class="lead-text" lang="${LANGATTR[lc]}">${esc(c.desc[lc])}</p>`).join('')}</div>${articleList(ARTICLES.filter((a) => a.cat === c.id))}</div>`;
+  return `<div class="wrap article"><nav class="crumbs" aria-label="Breadcrumb"><a href="#/docs">${u('docsTitle')}</a></nav><div class="page-head"><h1>${em(c.icon)}${langs().map((lc) => `<span lang="${LANGATTR[lc]}" style="display:block">${esc(c.title[lc])}</span>`).join('')}</h1>${langs().map((lc) => `<p class="lead-text" lang="${LANGATTR[lc]}">${esc(c.desc[lc])}</p>`).join('')}</div>${articleList(ARTICLES.filter((a) => a.category === c.id))}</div>`;
 }
 
 /* ------------------------------------------------------------- search page */
@@ -373,7 +373,7 @@ async function refreshSearch() {
     const a = byId(h.k), text = textOf[h.k], m = h.ms[0];
     const s0 = Math.max(0, m.i - 60), e0 = Math.min(text.length, m.i + m.l + 90);
     const snip = (s0 > 0 ? '… ' : '') + esc(text.slice(s0, m.i)).replace(/\n/g, ' ') + (m.l ? `<mark>${esc(text.slice(m.i, m.i + m.l)).replace(/\n/g, ' ')}</mark>` : '') + esc(text.slice(m.i + m.l, e0)).replace(/\n/g, ' ') + (e0 < text.length ? ' …' : '');
-    return `<li><a class="row" href="#/a/${a.id}"><span class="icon" aria-hidden="true">${settings.emoji ? a.icon : ''}</span><span><span class="t">${langs().map((lc) => esc(a.title[lc])).join(' · ')}</span> <span class="badge info">${langs().map((lc) => esc(cat(a.cat).title[lc])).join(' · ')}</span><br><span class="d mono">${snip}</span></span></a></li>`;
+    return `<li><a class="row" href="#/a/${a.id}"><span class="icon" aria-hidden="true">${settings.emoji ? a.icon : ''}</span><span><span class="t">${langs().map((lc) => esc(a.title[lc])).join(' · ')}</span> <span class="badge info">${langs().map((lc) => esc(categoryById(a.category).title[lc])).join(' · ')}</span><br><span class="d mono">${snip}</span></span></a></li>`;
   }).join('')}</ul>`;
   cnt.textContent = `${hits.length} ${uPlain('results')}`; live(cnt.textContent);
 }
@@ -493,7 +493,7 @@ function renderPage(isNav) {
   let html, title = uPlain('siteName');
   if (r.name === 'home') html = pageHome();
   else if (r.name === 'docs') { html = pageDocs(); title = uPlain('docsTitle'); }
-  else if (r.name === 'category') { const c = cat(r.id); if (!c) { route = { name: 'notfound' }; return renderPage(isNav); } html = pageCategory(c); title = c.title[langs()[0]]; }
+  else if (r.name === 'category') { const c = categoryById(r.id); if (!c) { route = { name: 'notfound' }; return renderPage(isNav); } html = pageCategory(c); title = c.title[langs()[0]]; }
   else if (r.name === 'article') { const a = byId(r.id); html = pageArticle(a); title = a.title[langs()[0]]; }
   else if (r.name === 'search') { html = pageSearch(); title = uPlain('searchTitle'); }
   else if (r.name === 'settings') { html = pageSettings(); title = uPlain('settingsTitle'); }

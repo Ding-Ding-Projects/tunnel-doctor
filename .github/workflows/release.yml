@@ -1,0 +1,77 @@
+name: Release desktop app
+
+on:
+  push:
+    branches: ['main']
+    paths-ignore: ['site/**', 'docs/**', 'design/**', '**.md']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Record start time
+        id: start
+        shell: pwsh
+        run: '"at=$((Get-Date).ToUniversalTime().ToString(''o''))" >> $env:GITHUB_OUTPUT'
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Write build provenance
+        run: node scripts/build-meta.js
+
+      - name: Package Squirrel installer
+        run: npx electron-forge make --platform win32 --arch x64
+
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STARTED: ${{ steps.start.outputs.at }}
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $short = (git rev-parse --short HEAD).Trim()
+          $tag = "v$version-build.$env:GITHUB_RUN_NUMBER"
+          $dir = 'out/make/squirrel.windows/x64'
+          $files = @(Get-ChildItem $dir -File | ForEach-Object FullName)
+          if (-not ($files | Where-Object { $_ -like '*Setup.exe' })) { throw 'Setup.exe missing' }
+          if (-not ($files | Where-Object { $_ -like '*RELEASES' })) { throw 'RELEASES missing' }
+          $started = [datetime]::Parse($env:STARTED).ToUniversalTime()
+          $finished = (Get-Date).ToUniversalTime()
+          $dur = $finished - $started
+          $lines = (git ls-files core server web desktop | ForEach-Object { (Get-Content $_ | Measure-Object -Line).Lines } | Measure-Object -Sum).Sum
+          $notes = @"
+          Tunnel Doctor $version for Windows, built from $short.
+
+          Download ``TunnelDoctorSetup.exe``. The installer is not code-signed, so Windows shows an unknown-publisher warning the first time.
+
+          What ran in this workflow: dependency install, provenance, packaging. No tests run in CI; the unit tests run locally with ``npm test``.
+
+          | | |
+          | --- | --- |
+          | Workflow started | $($started.ToString('u')) |
+          | Workflow completed | $($finished.ToString('u')) |
+          | Workflow duration | $([int]$dur.TotalMinutes) min $($dur.Seconds) s |
+          | Source lines (core, server, web, desktop) | $lines |
+          "@
+          $notes = ($notes -split "`n" | ForEach-Object { $_ -replace '^          ', '' }) -join "`n"
+          gh release create $tag @files --title "Tunnel Doctor $version (build $env:GITHUB_RUN_NUMBER)" --notes $notes --target $env:GITHUB_SHA
+          $r = gh release view $tag --json isDraft,isPrerelease,assets | ConvertFrom-Json
+          if ($r.isDraft -or $r.isPrerelease) { throw 'Release is not a normal release' }
+          "Published $tag with $($r.assets.Count) assets"

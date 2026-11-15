@@ -26,7 +26,7 @@ const TOKEN_NOTE_ZH = 'Cloudflare API 權杖只係用嚟讀取你帳戶嘅檢查
 
 export const ARTICLES = [
   // ---------------------------------------------------------------- checks
-  { id: 'public-dns', cat: 'checks', icon: '🌐',
+  { id: 'public-dns', category: 'checks', icon: '🌐',
     title: { en: 'Public DNS answer', zh: '公開 DNS 回應' },
     lead: L(
       { s: 'Asks public resolvers what your hostname resolves to and compares their answers.', f: 'Asks a couple of public DNS resolvers where your hostname points, and checks they agree.', p: 'Asks the whole internet\'s phone book where your hostname lives, and checks nobody is lying.' },
@@ -54,7 +54,7 @@ export const ARTICLES = [
     ],
     related: ['zone-record', 'set-proxied', 'local-cache'] },
 
-  { id: 'zone-record', cat: 'checks', icon: '📒',
+  { id: 'zone-record', category: 'checks', icon: '📒',
     title: { en: 'DNS record in your zone', zh: '區域內嘅 DNS 記錄' },
     lead: L(
       { s: 'Reads the record for the hostname in your Cloudflare zone and checks it is present and proxied.', f: 'Looks in your Cloudflare zone for the hostname\'s record and checks it exists and is proxied.', p: 'Rummages through your Cloudflare zone for the hostname\'s record, and tuts if the orange cloud is off.' },
@@ -81,7 +81,7 @@ export const ARTICLES = [
     ],
     related: ['public-dns', 'set-proxied', 'create-record'] },
 
-  { id: 'tunnel-health', cat: 'checks', icon: '❤️',
+  { id: 'tunnel-health', category: 'checks', icon: '❤️',
     title: { en: 'Tunnel health', zh: '隧道健康狀況' },
     lead: L(
       { s: 'Reads the tunnel\'s status and how many connector connections are live.', f: 'Checks whether your tunnel is up and how many connections it has to Cloudflare.', p: 'Takes the tunnel\'s pulse and counts how many connections it is holding on to.' },
@@ -106,15 +106,15 @@ export const ARTICLES = [
     ],
     related: ['edge-http', 'tunnel-route', 'token-exposure'] },
 
-  { id: 'tunnel-route', cat: 'checks', icon: '🧭',
+  { id: 'tunnel-route', category: 'checks', icon: '🧭',
     title: { en: 'Tunnel route', zh: '隧道路由' },
     lead: L(
       { s: 'Checks that the tunnel has a public hostname rule that sends this hostname to a service.', f: 'Checks the tunnel knows about this hostname and where to send it.', p: 'Checks the tunnel actually has directions for this hostname, instead of shrugging.' },
       { s: '確認隧道有一條公開主機名稱規則，將呢個主機名稱指去一個服務。', f: '睇下條隧道識唔識呢個主機名稱，同要送去邊。', p: '睇下條隧道有冇呢個主機名稱嘅路線圖，定係淨係聳聳肩。' }),
     sections: [
       S('what', 'What it checks', '檢查啲乜', P(
-        'Tunnel Doctor reads the tunnel configuration and looks for an ingress rule whose hostname matches. The rule\'s service (for example http://192.168.1.10:8123) is what the connector forwards requests to.',
-        'Tunnel Doctor 讀取隧道設定，搵有冇一條主機名稱吻合嘅 ingress 規則。規則入面嘅服務（例如 http://192.168.1.10:8123）就係連接器轉發請求去嘅地方。')),
+        'Tunnel Doctor reads the tunnel configuration and looks for an ingress rule whose hostname matches. The rule\'s service (for example http://192.0.2.10:8123) is what the connector forwards requests to.',
+        'Tunnel Doctor 讀取隧道設定，搵有冇一條主機名稱吻合嘅 ingress 規則。規則入面嘅服務（例如 http://192.0.2.10:8123）就係連接器轉發請求去嘅地方。')),
       S('results', 'What each result means', '各個結果代表乜', RES([
         ['route.ok', 'pass', 'A rule matches the hostname and names a service.', '有規則吻合主機名稱，而且指明咗服務。'],
         ['route.missing', 'fail', 'The tunnel is remotely managed but has no rule for this hostname, so the edge answers with an error. Offers "Add the route".', '隧道係遠端管理，但冇呢個主機名稱嘅規則，所以邊緣會回錯誤。會提供「新增路由」。'],
@@ -130,7 +130,7 @@ export const ARTICLES = [
     ],
     related: ['tunnel-health', 'add-route', 'origin'] },
 
-  { id: 'edge-http', cat: 'checks', icon: '🛰️',
+  { id: 'edge-http', category: 'checks', icon: '🛰️',
     title: { en: 'Cloudflare edge response', zh: 'Cloudflare 邊緣回應' },
     lead: L(
       { s: 'Requests the hostname over HTTPS and interprets what the Cloudflare edge answers.', f: 'Visits your hostname the way a browser would and reads what the edge says back.', p: 'Knocks on your front door from the outside and listens to who answers.' },
@@ -159,7 +159,7 @@ export const ARTICLES = [
     ],
     related: ['tunnel-health', 'origin', 'ha-proxy'] },
 
-  { id: 'origin', cat: 'checks', icon: '🏠',
+  { id: 'origin', category: 'checks', icon: '🏠',
     title: { en: 'Origin service', zh: '來源服務' },
     lead: L(
       { s: 'Requests the service behind the tunnel directly and tells refused, unreachable and timed-out apart.', f: 'Talks to the service behind the tunnel directly, and tells you whether it is off, unreachable or just slow.', p: 'Rings the service at home directly: is it off, out of range, or just ignoring you?' },
@@ -178,7 +178,7 @@ export const ARTICLES = [
       S('manual', 'How to fix it by hand', '手動點修', OL(
         ['From a machine on the same network as the connector, request the origin URL.', 'Refused means start the service or fix the port. Unreachable means fix the address or the network. Timeout means check firewalls.', 'Update the tunnel route if the address or port changed.'],
         ['喺連接器同一個網絡嘅機器，請求來源網址。', '被拒即係要開服務或者改正個埠。到唔到即係要改正地址或網絡。逾時就要查防火牆。', '如果地址或埠變咗，更新隧道路由。']),
-        CMD('curl -sSI http://192.168.1.10:8123/')),
+        CMD('curl -sSI http://192.0.2.10:8123/')),
       S('app', 'How the app fixes it', 'App 點樣修', P(
         'No automatic fix: the origin is your own service. The app tells refused, unreachable and timeout apart so you know where to look.',
         '冇自動修復：來源係你自己嘅服務。App 會分清被拒、到唔到同逾時，等你知道睇邊度。')),
@@ -188,7 +188,7 @@ export const ARTICLES = [
     ],
     related: ['tunnel-route', 'ha-proxy', 'edge-http'] },
 
-  { id: 'ha-proxy', cat: 'checks', icon: '🏡',
+  { id: 'ha-proxy', category: 'checks', icon: '🏡',
     title: { en: 'Home Assistant reverse proxy', zh: 'Home Assistant 反向代理' },
     lead: L(
       { s: 'Detects Home Assistant rejecting proxied requests and shows the exact settings that fix it.', f: 'If the origin is Home Assistant, checks whether it accepts requests that come through a proxy.', p: 'If the origin is Home Assistant, checks whether it is happy to meet visitors who arrive via a proxy.' },
@@ -206,7 +206,7 @@ export const ARTICLES = [
       S('manual', 'How to fix it by hand', '手動點修', OL(
         ['Edit Home Assistant\'s configuration.yaml and add the http section below. Use the address of the machine that runs cloudflared as the trusted proxy.', 'Restart Home Assistant, then run the check again.'],
         ['編輯 Home Assistant 嘅 configuration.yaml，加入下面嘅 http 設定。信任代理要填行 cloudflared 嗰部機嘅地址。', '重新啟動 Home Assistant，再行一次檢查。']),
-        CMD('http:\n  use_x_forwarded_for: true\n  trusted_proxies:\n    - 192.168.1.5')),
+        CMD('http:\n  use_x_forwarded_for: true\n  trusted_proxies:\n    - 192.0.2.5')),
       S('app', 'How the app fixes it', 'App 點樣修', P(
         'The app does not edit Home Assistant. It shows the settings above with your own values filled in, for you to paste.',
         'App 唔會改 Home Assistant。佢會顯示上面嘅設定，並填好你嘅數值，等你貼入去。')),
@@ -216,7 +216,7 @@ export const ARTICLES = [
     ],
     related: ['origin', 'edge-http', 'run-docker'] },
 
-  { id: 'ssl-mode', cat: 'checks', icon: '🔒',
+  { id: 'ssl-mode', category: 'checks', icon: '🔒',
     title: { en: 'Zone SSL mode', zh: '區域 SSL 模式' },
     lead: L(
       { s: 'Reads the zone SSL mode and warns about settings that cause redirect loops or certificate errors.', f: 'Reads your zone\'s SSL mode and warns when it can cause redirect loops or error 525.', p: 'Peeks at your SSL mode and warns when it is about to send visitors round in circles.' },
@@ -240,7 +240,7 @@ export const ARTICLES = [
     ],
     related: ['edge-http', 'origin', 'zone-record'] },
 
-  { id: 'local-cache', cat: 'checks', icon: '💾',
+  { id: 'local-cache', category: 'checks', icon: '💾',
     title: { en: 'This computer\'s DNS cache', zh: '本機 DNS 緩存' },
     lead: L(
       { s: 'Compares what this computer resolves with what public resolvers return.', f: 'Checks whether this computer remembers an old answer that differs from the public one.', p: 'Checks whether your computer is still living in the past with an old DNS answer.' },
@@ -267,7 +267,7 @@ export const ARTICLES = [
     ],
     related: ['public-dns', 'flush-dns', 'run-desktop'] },
 
-  { id: 'token-exposure', cat: 'checks', icon: '🙈',
+  { id: 'token-exposure', category: 'checks', icon: '🙈',
     title: { en: 'Tunnel token exposure', zh: '隧道權杖外洩風險' },
     lead: L(
       { s: 'Warns when a tunnel token is visible in a process command line.', f: 'Warns if your tunnel token can be read from a running process\'s command line.', p: 'Warns if your tunnel token is shouting its secret in the process list.' },
@@ -294,7 +294,7 @@ export const ARTICLES = [
     related: ['tunnel-health', 'run-desktop', 'troubleshooting'] },
 
   // ----------------------------------------------------------------- fixes
-  { id: 'set-proxied', cat: 'fixes', icon: '🟠',
+  { id: 'set-proxied', category: 'fixes', icon: '🟠',
     title: { en: 'Fix: turn on the proxy', zh: '修復：開啟代理' },
     lead: L(
       { s: 'Sets proxied to true on one DNS record so the hostname answers with Cloudflare addresses.', f: 'Switches the proxy on for one DNS record, so visitors get a Cloudflare address.', p: 'Flips the orange cloud on for one record. One flip, fully undoable.' },
@@ -318,7 +318,7 @@ export const ARTICLES = [
     ],
     related: ['public-dns', 'zone-record', 'create-record'] },
 
-  { id: 'create-record', cat: 'fixes', icon: '➕',
+  { id: 'create-record', category: 'fixes', icon: '➕',
     title: { en: 'Fix: create the record', zh: '修復：建立記錄' },
     lead: L(
       { s: 'Creates a proxied CNAME from the hostname to the tunnel.', f: 'Creates the missing DNS record that points your hostname at the tunnel.', p: 'Writes the missing line in the phone book so your hostname finally has an address.' },
@@ -342,7 +342,7 @@ export const ARTICLES = [
     ],
     related: ['zone-record', 'public-dns', 'add-route'] },
 
-  { id: 'add-route', cat: 'fixes', icon: '🛤️',
+  { id: 'add-route', category: 'fixes', icon: '🛤️',
     title: { en: 'Fix: add the tunnel route', zh: '修復：新增隧道路由' },
     lead: L(
       { s: 'Adds one public hostname rule to a remotely managed tunnel.', f: 'Adds a rule so the tunnel knows where to send your hostname.', p: 'Draws the missing arrow from your hostname to your service on the tunnel\'s map.' },
@@ -366,7 +366,7 @@ export const ARTICLES = [
     ],
     related: ['tunnel-route', 'create-record', 'origin'] },
 
-  { id: 'flush-dns', cat: 'fixes', icon: '🧽',
+  { id: 'flush-dns', category: 'fixes', icon: '🧽',
     title: { en: 'Fix: flush the DNS cache', zh: '修復：清除 DNS 緩存' },
     lead: L(
       { s: 'Clears this computer\'s DNS resolver cache. Desktop app only.', f: 'Makes this computer forget old DNS answers. Desktop app only.', p: 'Gives this computer a gentle bump on the head so it forgets old DNS answers. Desktop app only.' },
@@ -388,7 +388,7 @@ export const ARTICLES = [
     related: ['local-cache', 'run-desktop', 'public-dns'] },
 
   // ------------------------------------------------------------------- run
-  { id: 'run-desktop', cat: 'run', icon: '🖥️',
+  { id: 'run-desktop', category: 'run', icon: '🖥️',
     title: { en: 'Run the desktop app', zh: '運行桌面版 App' },
     lead: L(
       { s: 'The Windows desktop app runs every check, including this computer\'s DNS cache and process scan.', f: 'The desktop app is the full version: every check, including the ones that look at this computer.', p: 'The desktop app is the full-fat version: it can even look at the computer it lives on.' },
@@ -406,7 +406,7 @@ export const ARTICLES = [
     ],
     related: ['run-docker', 'run-appliance', 'local-cache'] },
 
-  { id: 'run-docker', cat: 'run', icon: '🐳',
+  { id: 'run-docker', category: 'run', icon: '🐳',
     title: { en: 'Run the Docker-hosted web app', zh: '運行 Docker 網頁版' },
     lead: L(
       { s: 'A web app in a Docker container, reachable from any browser on your network.', f: 'Runs in a container on a computer that is always on, and you open it from any browser on your network.', p: 'Lives in a container on the always-on box, and waves at every browser on your network.' },
@@ -425,7 +425,7 @@ export const ARTICLES = [
     ],
     related: ['http-api', 'run-desktop', 'run-appliance'] },
 
-  { id: 'run-appliance', cat: 'run', icon: '📀',
+  { id: 'run-appliance', category: 'run', icon: '📀',
     title: { en: 'Run the appliance image', zh: '運行專用系統映像' },
     lead: L(
       { s: 'A small operating system image that boots straight into Tunnel Doctor.', f: 'A tiny dedicated system for a small machine or virtual machine that starts Tunnel Doctor when it boots.', p: 'A tiny system whose entire personality is Tunnel Doctor. Boot it and walk away.' },
@@ -444,7 +444,7 @@ export const ARTICLES = [
     related: ['run-docker', 'run-desktop', 'http-api'] },
 
   // ------------------------------------------------------------- reference
-  { id: 'http-api', cat: 'reference', icon: '🔌',
+  { id: 'http-api', category: 'reference', icon: '🔌',
     title: { en: 'HTTP API', zh: 'HTTP API' },
     lead: L(
       { s: 'The routes the Docker-hosted web app and the appliance image expose.', f: 'The routes behind the hosted forms, for the curious and for scripts.', p: 'The doors behind the hosted forms. Knock politely, with the right header.' },
@@ -476,11 +476,11 @@ export const ARTICLES = [
       S('security', 'Security notes', '安全注意', UL(
         ['The API token is never returned by any route.', 'Every state-changing request needs the header x-tunnel-doctor: 1, which a cross-site form cannot send.', 'Passwords are hashed with scrypt, and sign-in attempts are rate limited.', 'The service binds to the LAN and is not meant to be exposed to the Internet.'],
         ['冇任何路由會回傳 API 權杖。', '每個更改狀態嘅請求都需要標頭 x-tunnel-doctor: 1，跨站表單送唔到。', '密碼用 scrypt 雜湊，登入嘗試有次數限制。', '服務綁定區域網絡，唔係設計來暴露喺互聯網。'])),
-      S('example', 'Example', '例子', CMD('curl -sS -X POST http://192.168.1.20:8080/api/checks \\\n  -H "content-type: application/json" \\\n  -H "x-tunnel-doctor: 1" \\\n  -b cookies.txt \\\n  -d \'{"hostname":"ha.example.com"}\''))
+      S('example', 'Example', '例子', CMD('curl -sS -X POST http://192.0.2.20:8080/api/checks \\\n  -H "content-type: application/json" \\\n  -H "x-tunnel-doctor: 1" \\\n  -b cookies.txt \\\n  -d \'{"hostname":"ha.example.com"}\''))
     ],
     related: ['run-docker', 'run-appliance', 'troubleshooting'] },
 
-  { id: 'troubleshooting', cat: 'reference', icon: '🧯',
+  { id: 'troubleshooting', category: 'reference', icon: '🧯',
     title: { en: 'Troubleshooting', zh: '排解問題' },
     lead: L(
       { s: 'What to do when Tunnel Doctor itself reports something unexpected.', f: 'What to do when Tunnel Doctor itself gives you a surprise.', p: 'Even doctors need a doctor sometimes. Start here.' },
