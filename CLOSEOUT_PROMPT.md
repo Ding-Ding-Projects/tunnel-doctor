@@ -13,8 +13,8 @@ normal releases with the Squirrel installer; the ghcr image starts healthy via
 compose.yaml and answers on the LAN; the project site is live and set as the
 repository homepage.
 
-Open: appliance CI build failing (last change: docker pull + linuxkit build
---docker); installed desktop window not launched or captured; host.bat --logs
+Open: appliance builds and boots in QEMU but the app never answers on 8080
+and service logs are not captured (add memlogd/logwrite next); installed desktop window not launched or captured; host.bat --logs
 not driven; Docker-hosted setup wizard missing; most of ROADMAP Phase 3.
 
 Next: make appliance.yml green and boot it in QEMU; install and capture the

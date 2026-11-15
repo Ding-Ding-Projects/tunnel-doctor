@@ -35,8 +35,10 @@ are in. Nothing is deleted to make the list look shorter; dropped items move to
       the LAN URL fetched from a second machine; `host.bat --detached` and
       `--stop`. Not yet verified: `host.bat --logs` and its menu. Not started: the
       portable setup wizard.
-- [ ] Appliance OS image (LinuxKit). Definition and workflow written; the CI
-      build still fails and the image has never booted.
+- [ ] Appliance OS image (LinuxKit). Done: CI builds the ISO and raw EFI image
+      from the published container image and boots the ISO in QEMU with a blank
+      data disk (disk formatted and mounted, network up). Not yet working: the app
+      does not answer on port 8080; service logs are not captured yet.
 - Features that only work in the desktop app, and why:
   - Local resolver cache check and flush: they read and clear the DNS cache of
     the computer the app runs on. In the hosted forms that computer is the

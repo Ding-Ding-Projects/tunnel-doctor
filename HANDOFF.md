@@ -25,8 +25,13 @@ shared interface (`web/`) feed three delivery forms.
 
 ### Not done or not verified
 
-- The appliance image build fails in CI; it has never booted. The latest
-  change pulls the image into Docker first and builds with `linuxkit build --docker`.
+- The appliance image now builds (ISO and raw EFI disk) and boots in QEMU in CI:
+  the kernel starts, the blank data disk is formatted and mounted, and the
+  network comes up through DHCP. The app still does not answer on port 8080
+  within 300 seconds, and service output does not reach the serial console, so
+  the cause is not yet visible. Next: add LinuxKit `memlogd` and `logwrite` so
+  service logs are kept, run the boot with a longer wait, and read the
+  tunnel-doctor service log.
 - The installed desktop app has not been launched or captured; only the web
   interface has been captured.
 - `host.bat --logs` and its menu were not driven.
