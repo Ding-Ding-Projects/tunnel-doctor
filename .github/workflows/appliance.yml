@@ -44,7 +44,9 @@ jobs:
       - name: Boot smoke check of the ISO
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-system-x86 ovmf
+          sudo apt-get install -y qemu-system-x86 qemu-utils ovmf
+          # The appliance keeps its data on the first blank disk, as it would on a real VM.
+          qemu-img create -f qcow2 data.qcow2 4G
           qemu-system-x86_64 -nographic -m 1024 -machine q35 \
             -bios /usr/share/ovmf/OVMF.fd \
             -cdrom appliance/build/tunnel-doctor-efi.iso \
