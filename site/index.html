@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tunnel Doctor</title>
+<meta name="description" content="Tunnel Doctor finds out why a Cloudflare Tunnel hostname is down and fixes it after you confirm. Project site: documentation and downloads.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2336618e'/%3E%3Cpath d='M16 7v18M7 16h18' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<script>
+// Apply saved theme settings before first paint to avoid a flash.
+try {
+  var s = JSON.parse(localStorage.getItem('td-settings') || '{}');
+  var d = document.documentElement;
+  if (s.theme === 'light' || s.theme === 'dark') d.setAttribute('data-theme', s.theme);
+  if (s.motion === 'reduce' || s.motion === 'allow') d.setAttribute('data-motion', s.motion);
+  if (s.textSize) d.style.fontSize = Math.min(200, Math.max(100, +s.textSize || 100)) + '%';
+} catch (e) {}
+</script>
+</head>
+<body>
+<a class="skip" href="#main" id="skip">Skip to content</a>
+<header class="site-header" role="banner">
+  <div class="bar">
+    <a class="brand" href="#/">Tunnel Doctor</a>
+    <button class="btn tonal menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Site"></nav>
+    <select id="lang-sel" class="langsel"><option value="en">English</option><option value="zh">粵語</option><option value="both">English + 粵語</option></select>
+    <span class="meta" id="meta" aria-live="off"></span>
+  </div>
+  <div class="searchrow" role="search">
+    <label class="sr-only" for="q" id="q-label">Search the documentation</label>
+    <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Search">
+    <button class="btn tonal" id="mode-btn" type="button" aria-pressed="false">Regex</button>
+    <button class="btn text" id="palette-btn" type="button">Ctrl+Shift+F</button>
+  </div>
+</header>
+<main id="main" tabindex="-1"><noscript><p class="wrap">This site needs JavaScript to show its pages. The project and its documentation are also on GitHub: <a href="https://github.com/Ding-Ding-Projects/tunnel-doctor">Ding-Ding-Projects/tunnel-doctor</a>.</p></noscript></main>
+<footer class="site-footer" role="contentinfo"><span id="footer"></span></footer>
+<div id="palette" class="palette" role="dialog" aria-modal="true" aria-labelledby="pal-title" hidden></div>
+<div id="live" class="sr-only" aria-live="polite" role="status"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
