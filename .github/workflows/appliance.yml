@@ -50,6 +50,7 @@ jobs:
           qemu-system-x86_64 -nographic -m 1024 -machine q35 \
             -bios /usr/share/ovmf/OVMF.fd \
             -cdrom appliance/build/tunnel-doctor-efi.iso \
+            -drive file=data.qcow2,if=virtio,format=qcow2 
             -net nic -net user,hostfwd=tcp::8080-:8080 \
             > qemu.log 2>&1 &
           for i in $(seq 1 60); do
