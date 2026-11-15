@@ -1,0 +1,17 @@
+.git
+.github
+.agent
+node_modules
+out
+dist
+design
+docs
+test
+desktop
+site
+appliance
+scripts
+*.md
+!README.md
+host.bat
+compose.yaml

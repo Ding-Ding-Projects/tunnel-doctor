@@ -1,0 +1,68 @@
+# Tunnel Doctor appliance: a small LinuxKit operating system that runs the
+# published Tunnel Doctor image and nothing else. Image tags below are the
+# ones from the LinuxKit v1.8.2 docker.yml example. See README.md in this
+# folder for build, import and the honest list of what is not yet verified.
+kernel:
+  image: linuxkit/kernel:6.6.71
+  cmdline: "console=tty0 console=ttyS0 console=ttyAMA0 console=ttysclp0"
+init:
+  - linuxkit/init:680da6e6f79bb8236a095147d532cd2160e23c9f
+  - linuxkit/runc:2dfee46421e963d6c0d946137e46fe36fa606d29
+  - linuxkit/containerd:838b745e38e43309393675ce3cf04bee9047eb91
+  - linuxkit/ca-certificates:a4f15fe71bb0ad7560ff78f48504dd2af500a442
+onboot:
+  - name: sysctl
+    image: linuxkit/sysctl:2fad4cdf96faa97bf7888696b8c3ca00f98137af
+  - name: sysfs
+    image: linuxkit/sysfs:8d484374bb71b04984fa1e989b1dfc34b3e258a7
+  # Formats the first blank data disk (if any) and mounts it for persistence.
+  - name: format
+    image: linuxkit/format:512d4fb6cd40c1d90a4aa8335d1bd167fa34a10e
+  - name: mount
+    image: linuxkit/mount:54906e884b21aca02bf5ecae65f3741b89d8c4e6
+    command: ["/usr/bin/mountie", "/var/lib/tunnel-doctor"]
+  # The Tunnel Doctor image runs as an unprivileged user; give it the volume.
+  - name: own-data
+    image: alpine:3.20
+    binds:
+      - /var/lib/tunnel-doctor:/var/lib/tunnel-doctor
+    command: ["sh", "-c", "chown -R 1000:1000 /var/lib/tunnel-doctor"]
+services:
+  # No getty: there is no login shell on this appliance.
+  - name: rngd
+    image: linuxkit/rngd:80f22b0f60d23c29ce28d06674bc77fe3775a38b
+  - name: dhcpcd
+    image: linuxkit/dhcpcd:4681273eeea47c26d980958656e60fe70d49e318
+  - name: ntpd
+    image: linuxkit/openntpd:c28b50438374f8a413b10297f68c65c0f31bf830
+  - name: tunnel-doctor
+    image: ghcr.io/ding-ding-projects/tunnel-doctor:latest
+    net: host
+    binds:
+      - /etc/resolv.conf:/etc/resolv.conf
+      - /var/lib/tunnel-doctor:/data
+    env:
+      - TD_HOST=0.0.0.0
+      - TD_PORT=8080
+  # Prints the LAN address on the console so the user knows where to browse.
+  - name: console-url
+    image: alpine:3.20
+    net: host
+    capabilities:
+      - CAP_NET_ADMIN
+    binds:
+      - /dev/console:/dev/console
+    command:
+      - sh
+      - -c
+      - |
+        while true; do
+          ip=$(ip -4 -o addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
+          if [ -n "$ip" ]; then
+            printf '\n  Tunnel Doctor is running.\n  Open  http://%s:8080/\n\n' "$ip" > /dev/console
+          fi
+          sleep 30
+        done
+files:
+  - path: var/lib/tunnel-doctor
+    directory: true

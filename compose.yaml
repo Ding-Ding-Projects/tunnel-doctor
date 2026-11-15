@@ -1,0 +1,31 @@
+# Tunnel Doctor, hosted form. Start with host.bat, or: docker compose up -d
+# Set TD_PORT (host port, default 8080) and TD_TAG (image tag, default latest)
+# in the environment or a .env file next to this file. No credentials live here.
+services:
+  tunnel-doctor:
+    image: ghcr.io/ding-ding-projects/tunnel-doctor:${TD_TAG:-latest}
+    ports:
+      - "${TD_PORT:-8080}:8080"
+    volumes:
+      - tunnel-doctor-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/api/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    # Keep the encryption key outside the data volume (recommended).
+    # Create ./secrets/td_secret_key.txt, then uncomment these and the
+    # top-level "secrets:" block below:
+    # environment:
+    #   TD_SECRET_KEY_FILE: /run/secrets/td_secret_key
+    # secrets:
+    #   - td_secret_key
+
+volumes:
+  tunnel-doctor-data:
+
+# secrets:
+#   td_secret_key:
+#     file: ./secrets/td_secret_key.txt
