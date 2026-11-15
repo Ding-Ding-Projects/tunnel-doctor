@@ -34,8 +34,11 @@ jobs:
       - name: Build images
         run: |
           mkdir -p appliance/build
-          linuxkit build --format iso-efi --dir appliance/build appliance/tunnel-doctor.yml
-          linuxkit build --format raw-efi --dir appliance/build appliance/tunnel-doctor.yml
+          # LinuxKit resolves this ghcr.io reference against Docker Hub, so pull it
+          # into the local daemon first and let LinuxKit use the local copy.
+          docker pull ghcr.io/ding-ding-projects/tunnel-doctor:latest
+          linuxkit build --docker --format iso-efi --dir appliance/build appliance/tunnel-doctor.yml
+          linuxkit build --docker --format raw-efi --dir appliance/build appliance/tunnel-doctor.yml
           ls -l appliance/build
 
       - name: Boot smoke check of the ISO

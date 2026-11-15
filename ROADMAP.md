@@ -25,12 +25,18 @@ are in. Nothing is deleted to make the list look shorter; dropped items move to
 
 ## Phase 2: Three delivery forms from one core
 
-- [ ] Desktop app (Windows): written, not yet built or launched
-- [ ] Docker-hosted web app with login, `compose.yaml`, published image,
-      `host.bat --detached` / `--logs`, portable setup wizard and verified LAN URL:
-      not started
-- [ ] Appliance OS image that boots straight into the Docker-hosted web app:
-      not started
+- [ ] Desktop app (Windows). Done: `build-installer.bat` produces a genuine
+      Squirrel installer (Setup.exe, RELEASES, full .nupkg) and CI publishes it as
+      a normal release on every push. Not yet verified: installing it and driving
+      the installed window, automatic updates.
+- [ ] Docker-hosted web app. Done and verified: login, image published to
+      `ghcr.io/ding-ding-projects/tunnel-doctor` bound to its commit, real
+      `docker compose pull` and start from the published image, health check, and
+      the LAN URL fetched from a second machine; `host.bat --detached` and
+      `--stop`. Not yet verified: `host.bat --logs` and its menu. Not started: the
+      portable setup wizard.
+- [ ] Appliance OS image (LinuxKit). Definition and workflow written; the CI
+      build still fails and the image has never booted.
 - Features that only work in the desktop app, and why:
   - Local resolver cache check and flush: they read and clear the DNS cache of
     the computer the app runs on. In the hosted forms that computer is the
@@ -72,7 +78,7 @@ site unless the line says otherwise.
 - [ ] Functional UI and truthful empty states
 
 ### Navigation, search and commands
-- [ ] Practical in-app onboarding wizard
+- [x] Practical in-app onboarding wizard (five steps, Back/Next/Skip, resumes where it stopped; driven in the hosted form)
 - [ ] Extension support
 - [ ] Browser-style tabs (one workspace tab per hostname profile, explicit New tab catalog)
 - [ ] Full regex builder beside every search
@@ -118,8 +124,8 @@ site unless the line says otherwise.
 
 ### Completeness and evidence
 - [ ] Per-surface completeness inventory and parity
-- [ ] Front-screen version and updated-at from build provenance
-- [ ] Real screenshots wherever a surface is described
+- [x] Front-screen version and updated-at from build provenance (shown on every screen; captured)
+- [ ] Real screenshots wherever a surface is described (README has real web-interface captures; installed desktop window not captured yet)
 - [ ] Committed screen recording
 - [ ] Design-reference parity
 - [x] Design surfaces live in the repository (`design/tunnel-doctor-canvas/`)
@@ -127,13 +133,13 @@ site unless the line says otherwise.
 - [ ] Public screenshot gallery
 
 ### Project site
-- [ ] Material Design 3 project site carrying every feature
+- [ ] Material Design 3 project site carrying every feature (live; carries every check and fix article, not every app feature yet)
 - [ ] Mobile-friendly site
 - [ ] Verified installer download on Home
 - [ ] One detailed article per feature
 - [ ] Vendored fonts
 - [ ] Link preview picture
-- [ ] Repository About homepage points at the site
+- [x] Repository About homepage points at the site (read back)
 - [ ] Personal wording unlock only after authentication (hosted forms)
 - [ ] Site also shipped as a portable desktop companion
 
@@ -144,17 +150,17 @@ site unless the line says otherwise.
 - [ ] Tidbyt status frames (suspended by the maintainer; not required while suspended)
 
 ### Build, packaging and release
-- [ ] Root `build.bat` and `build-installer.bat`
+- [x] Root `build.bat` and `build-installer.bat` (both run to success on Windows; Node 26 and current-folder lookup handled)
 - [ ] One fresh-Windows build-and-run command
 - [ ] One-click dependency fetcher
 - [ ] Bundled dependencies
-- [ ] Genuine Squirrel.Windows installer
+- [x] Genuine Squirrel.Windows installer (Setup.exe, RELEASES, full .nupkg; install not yet driven)
 - [ ] Self-signing only where a format requires it (none currently)
 - [ ] Automatic updates
 - [ ] Original logo and packaged icon
-- [ ] A real release on every push
-- [ ] Workflow timing in release notes
-- [ ] Line counts in release notes
+- [x] A real release on every push (normal releases, verified not draft or prerelease)
+- [x] Workflow timing in release notes
+- [x] Line counts in release notes
 - [ ] Dim sum photo reference in releases
 - [ ] Dim sum release code names
 - [ ] CI dependency bootstrap

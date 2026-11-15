@@ -8,9 +8,17 @@ Cloudflare edge, and the service behind it (with a specific check for
 Home Assistant's reverse-proxy settings). It names the one thing that is wrong
 and offers a fix you preview and confirm before anything changes.
 
-> **Status: early development.** The diagnosis core and its tests work. The
-> desktop app, the Docker-hosted web app and the appliance image are in
-> progress. See [ROADMAP.md](ROADMAP.md) for exactly what is done.
+**Project site and documentation:** https://ding-ding-projects.github.io/tunnel-doctor/
+
+> **Status: early release.** The checks, fixes, Windows installer and
+> Docker-hosted web app work and are released. The appliance image does not
+> build yet. See [ROADMAP.md](ROADMAP.md) for exactly what is done and verified.
+
+![Diagnose view in the light theme](docs/screenshots/diagnose-light.png)
+
+| Dark theme | Settings with regex builder | Phone width |
+| --- | --- | --- |
+| ![Diagnose, dark theme](docs/screenshots/diagnose-dark.png) | ![Settings, dark theme](docs/screenshots/settings-dark.png) | ![Diagnose at phone width](docs/screenshots/diagnose-narrow.png) |
 
 ## Problems it catches
 
@@ -31,6 +39,27 @@ and offers a fix you preview and confirm before anything changes.
 | Windows desktop app | You want every check, including this computer's DNS cache |
 | Docker-hosted web app | You want it always on your network, reachable from any browser |
 | Appliance OS image | You want a small dedicated machine or VM that boots straight into it |
+
+## Install
+
+- **Windows desktop app:** download `TunnelDoctorSetup.exe` from the
+  [latest release](https://github.com/Ding-Ding-Projects/tunnel-doctor/releases/latest).
+  It is not code-signed, so Windows shows an unknown-publisher warning.
+- **Docker-hosted web app:** download `compose.yaml` and `host.bat`, then run
+  `host.bat --detached` (or `docker compose up -d`). It prints the LAN address.
+  The first visit asks you to create a password. See
+  [docs/features/hosting](docs/features/hosting/README.md).
+- **Appliance image:** see [appliance/README.md](appliance/README.md). Not built yet.
+
+## Build from source on Windows
+
+```bat
+.\build.bat --run
+```
+
+That installs Node.js if it is missing, installs dependencies, runs the tests
+and opens the desktop app. `build-installer.bat` produces the Squirrel
+installer in `out\make\squirrel.windows\x64`.
 
 ## Develop
 

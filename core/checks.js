@@ -63,7 +63,9 @@ export async function runChecks(ctx, onResult = () => {}) {
     const ev = answers.map((a) => `${a.resolver}: ${a.nxdomain ? 'NXDOMAIN' : [...a.cnames.map((c) => 'CNAME ' + c), ...a.ipv4.map((x) => 'A ' + x), ...a.ipv6.map((x) => 'AAAA ' + x)].join(', ') || 'no answer'}`);
     const tunnelOnly = answers.find((a) => a.cnames.some(isTunnelTarget) && a.ipv4.length === 0 && a.ipv6.every(isPrivateAddress));
     const sigs = new Set(answers.map((a) => [...a.ipv4].sort().join(',') + '|' + a.nxdomain));
+    const empty = (a) => a.nxdomain || (a.ipv4.length === 0 && a.ipv6.length === 0 && a.cnames.length === 0);
     if (answers.every((a) => a.nxdomain)) emit(r('public-dns', 'fail', 'dns.nxdomain', { hostname }, ev));
+    else if (answers.every(empty)) emit(r('public-dns', 'fail', 'dns.no-records', { hostname }, ev));
     else if (tunnelOnly) {
       state.tunnelId = tunnelIdFromTarget(tunnelOnly.cnames.find(isTunnelTarget));
       emit(r('public-dns', 'fail', 'dns.unproxied-tunnel', { hostname, resolver: tunnelOnly.resolver }, ev));

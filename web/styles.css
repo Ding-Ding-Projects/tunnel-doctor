@@ -176,3 +176,11 @@ mark { background: var(--primary-container); color: var(--on-primary-container);
 .ctxmenu button { display: flex; justify-content: space-between; gap: 16px; min-height: 40px; padding: 0 12px; border: 0; border-radius: var(--radius-s); background: none; text-align: left; cursor: pointer; }
 .ctxmenu button:hover, .ctxmenu button:focus-visible { background: var(--primary-container); }
 .ctxmenu kbd { font-family: var(--mono); font-size: .75rem; color: var(--on-surface-variant); }
+
+/* Search wrapper: the bar keeps its own height; the wrapper takes the row space. */
+.search-wrap { display: flex; flex-direction: column; gap: 8px; flex: 1 1 320px; min-width: 0; }
+.search-wrap > .search { flex: none; }
+/* Bilingual labels inside buttons and chips sit on one line instead of overflowing. */
+.btn .yue, .chip .yue, .badge .yue, .rail .yue, .tab .yue { display: inline; margin-left: 6px; font-size: inherit; color: inherit; opacity: .85; }
+.btn { flex-wrap: wrap; row-gap: 0; text-align: center; padding-block: 4px; }
+.form-row .field:nth-child(2) { flex-basis: 300px; }

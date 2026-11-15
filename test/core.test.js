@@ -123,3 +123,14 @@ test('helpers', () => {
   assert.ok(validateOriginUrl('http://192.0.2.10:8124'));
   assert.ok(!validateOriginUrl('file:///etc/passwd'));
 });
+
+test('a name with no address records fails instead of passing', async () => {
+  const impl = async (url) => {
+    const u = new URL(url);
+    if (u.host === 'cloudflare-dns.com' || u.host === 'dns.google') return json({ Status: 0, Answer: [] });
+    throw Object.assign(new TypeError('fetch failed'), { cause: { code: 'ENOTFOUND' } });
+  };
+  const report = await runChecks({ hostname: 'empty.example.com', fetchImpl: impl, capabilities: {} });
+  assert.equal(byId(report, 'public-dns').code, 'dns.no-records');
+  assert.equal(byId(report, 'public-dns').status, 'fail');
+});

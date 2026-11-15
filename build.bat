@@ -26,6 +26,14 @@ if errorlevel 1 (
   call npm install --no-audit --no-fund || (echo [build] ERROR: dependency install failed & exit /b 1)
 )
 
+rem Under Node 23 and newer, Electron's own download step can stop part-way
+rem without an error. Finish it on Node 22 LTS when the binary is missing.
+if not exist "node_modules\electron\path.txt" (
+  echo [build] Electron binary missing; installing it with Node.js 22 LTS
+  call npx -y node@22 node_modules\electron\install.js || (echo [build] ERROR: Electron install failed & exit /b 1)
+)
+if not exist "node_modules\electron\path.txt" (echo [build] ERROR: Electron binary is still missing & exit /b 1)
+
 echo [build] Writing build provenance
 call node scripts\build-meta.js || exit /b 1
 

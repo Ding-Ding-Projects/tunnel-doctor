@@ -58,6 +58,7 @@ const T = {
 const R = {
   'dns.ok': { en: (p) => `Resolves publicly to ${p.addresses || 'the edge'}`, yue: (p) => `公共解析到 ${p.addresses || '邊緣'}` },
   'dns.nxdomain': { en: (p) => `${p.hostname} does not exist in public DNS`, yue: (p) => `公共 DNS 搵唔到 ${p.hostname}` },
+  'dns.no-records': { en: (p) => `${p.hostname} exists in DNS but has no address records`, yue: (p) => `${p.hostname} 喺 DNS 存在，但冇任何地址紀錄` },
   'dns.unproxied-tunnel': { en: (p) => `Public DNS (${p.resolver}) hands out a private tunnel address that browsers cannot reach`, yue: (p) => `公共 DNS（${p.resolver}）派出私人隧道地址，瀏覽器去唔到` },
   'dns.resolvers-disagree': { en: () => 'Public resolvers give different answers; a change may still be spreading', yue: () => '唔同公共解析器答案唔同，可能改動仲未傳開' },
   'zone.ok': { en: (p) => `${p.type} record present, proxied: ${p.proxied}`, yue: (p) => `有 ${p.type} 紀錄，proxy：${p.proxied}` },

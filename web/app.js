@@ -15,8 +15,9 @@ const S = {
 const root = document.getElementById('app');
 
 // ---------- helpers ----------
+const SVG_NS = 'http://www.w3.org/2000/svg';
 function h(tag, attrs, ...kids) {
-  const el = document.createElement(tag);
+  const el = tag === 'svg' ? document.createElementNS(SVG_NS, 'svg') : document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
     if (v === false || v == null) continue;
     if (k.startsWith('on')) el.addEventListener(k.slice(2).toLowerCase(), v);
@@ -129,7 +130,7 @@ function searchBox(state, id, labelKey, onChange) {
       onInput: (e) => { if (state.mode === 'regex') state.pattern = e.target.value; else state.query = e.target.value; onChange(); } }),
     h('button', { class: 'regex-toggle', type: 'button', 'aria-pressed': String(state.open), 'aria-label': P('regexBuilder'), 'aria-controls': `${id}-rx`,
       onClick: () => { state.open = !state.open; render(); } }, '.*'));
-  return h('div', { style: 'display:flex;flex-direction:column;gap:8px;flex:1 1 320px;min-width:0' }, box, state.open ? regexBuilder(state, `${id}-rx`, onChange) : null);
+  return h('div', { class: 'search-wrap' }, box, state.open ? regexBuilder(state, `${id}-rx`, onChange) : null);
 }
 
 function regexBuilder(state, id, onChange) {
@@ -231,7 +232,7 @@ function diagnoseView() {
   const form = h('form', { class: 'form-row', onSubmit: (e) => { e.preventDefault(); runChecks(); } },
     // The fields below are read by runChecks() when it is called without arguments.
     h('div', { class: 'field' }, h('label', { for: 'host' }, P('hostname')), h('input', { id: 'host', class: 'mono', required: true, value: tab?.hostname || '', placeholder: 'ha.example.com', autocomplete: 'off' })),
-    h('div', { class: 'field' }, h('label', { for: 'origin' }, P('origin')), h('input', { id: 'origin', class: 'mono', value: tab?.originUrl || '', placeholder: 'http://homeassistant.local:8123' }), h('span', { class: 'help' }, P('originHelp'))),
+    h('div', { class: 'field' }, h('label', { for: 'origin' }, P('origin')), h('input', { id: 'origin', class: 'mono', value: tab?.originUrl || '', placeholder: 'http://ha.local:8123' }), h('span', { class: 'help' }, P('originHelp'))),
     h('button', { id: 'run-btn', class: 'btn filled', type: 'submit', disabled: S.busy }, S.busy ? L('running') : L('run')));
   if (!rep) return [form, h('div', { class: 'banner info', role: 'status' }, L('noReport'))];
   const selId = S.selected[tab.id] || (rep.results.find((r) => r.status === 'fail') || rep.results[0]).id;
