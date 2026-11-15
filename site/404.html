@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found - Tunnel Doctor</title>
+<link rel="stylesheet" href="/tunnel-doctor/styles.css">
+<script>
+// Project pages are served from /tunnel-doctor/ on GitHub Pages; fall back to the relative path elsewhere.
+(function () {
+  var base = location.pathname.indexOf('/tunnel-doctor/') === 0 ? '/tunnel-doctor/' : '/';
+  var l = document.querySelector('link[rel=stylesheet]'); l.href = base + 'styles.css';
+  window.addEventListener('DOMContentLoaded', function () { document.getElementById('home').href = base; });
+})();
+</script>
+</head>
+<body>
+<main class="wrap" style="padding-block:64px">
+  <h1>Page not found <span lang="yue-Hant-HK">· 搵唔到呢頁</span></h1>
+  <p>That page does not exist on this site. <span lang="yue-Hant-HK">呢頁喺呢個網站唔存在。</span></p>
+  <p><a class="btn filled" id="home" href="/">Go to the home page · 返去主頁</a></p>
+</main>
+</body>
+</html>
