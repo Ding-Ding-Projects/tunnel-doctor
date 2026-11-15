@@ -51,7 +51,7 @@ services:
     capabilities:
       - CAP_NET_ADMIN
     binds:
-      - /dev/console:/dev/console
+      - /dev:/dev
     command:
       - sh
       - -c
@@ -59,10 +59,30 @@ services:
         while true; do
           ip=$(ip -4 -o addr show scope global | awk '{print $4}' | cut -d/ -f1 | head -n1)
           if [ -n "$ip" ]; then
-            printf '\n  Tunnel Doctor is running.\n  Open  http://%s:8080/\n\n' "$ip" > /dev/console
+            printf '\n  Tunnel Doctor is running.\n  Open  http://%s:8080/\n\n' "$ip" > /dev/ttyS0
           fi
           sleep 30
         done
+  # Boot diagnostics: copies the service logs to the serial console so a
+  # failed start is visible in the CI boot check and on a real console.
+  - name: boot-diagnostics
+    image: alpine:3.20
+    capabilities:
+      - all
+    binds:
+      - /var/log:/var/log
+      - /dev:/dev
+    command:
+      - sh
+      - -c
+      - |
+        sleep 45
+        for f in /var/log/*.log; do
+          [ -f "$f" ] || continue
+          echo "=== $f" > /dev/ttyS0
+          tail -n 20 "$f" > /dev/ttyS0
+        done
+        ls -la /var/log > /dev/ttyS0
 files:
   - path: var/lib/tunnel-doctor
     directory: true
