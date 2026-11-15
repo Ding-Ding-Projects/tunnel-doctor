@@ -1,0 +1,22 @@
+{
+  "name": "tunnel-doctor",
+  "productName": "Tunnel Doctor",
+  "version": "0.1.0",
+  "description": "Diagnoses and fixes common Cloudflare Tunnel, DNS and Home Assistant reverse-proxy problems",
+  "license": "MIT",
+  "type": "module",
+  "main": "desktop/main.cjs",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/",
+    "start": "electron .",
+    "serve": "node server/index.js",
+    "build:web": "node scripts/build-meta.js",
+    "make": "node scripts/build-meta.js && electron-forge make"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "7.8.1",
+    "@electron-forge/maker-squirrel": "7.8.1",
+    "electron": "38.2.0"
+  }
+}

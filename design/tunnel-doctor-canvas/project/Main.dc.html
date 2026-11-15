@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tunnel Doctor - Diagnose</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#36618e}a:hover{color:#1b4a76}
+.mono{font-family:'Roboto Mono',monospace}
+.rail-item{display:flex;flex-direction:column;align-items:center;gap:4px;width:80px;padding:6px 0;border:0;background:none;color:#43474e;font:500 12px 'Roboto Flex',sans-serif;cursor:pointer}
+.rail-pill{display:flex;align-items:center;justify-content:center;width:56px;height:32px;border-radius:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:8px;font:500 13px 'Roboto Flex',sans-serif}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 20px;border-radius:20px;border:0;font:500 14px 'Roboto Flex',sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column; background: #f8f9ff; color: #191c20; font-family: 'Roboto Flex', sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 10px 20px; background: #f8f9ff; border-bottom: 1px solid #e0e2ec">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="#36618e"></rect><path d="M8 17c2-6 10-6 12 0" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"></path><circle cx="14" cy="17" r="2" fill="#fff"></circle></svg>
+      <span style="font-size: 18px; font-weight: 600">Tunnel Doctor</span>
+    </div>
+    <div style="display: flex; flex: 1 1 360px; min-width: 0; align-items: center; gap: 8px; height: 44px; padding: 0 6px 0 16px; border-radius: 22px; background: #eceef4">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="#43474e" stroke-width="2" fill="none"></circle><path d="M16 16l4 4" stroke="#43474e" stroke-width="2" stroke-linecap="round"></path></svg>
+      <label for="search" style="position: absolute; left: -9999px">Search checks, fixes and settings</label>
+      <input id="search" placeholder="Search checks, fixes and settings" style="flex: 1; min-width: 0; border: 0; background: none; font: 400 15px 'Roboto Flex', sans-serif; color: #191c20; outline: none">
+      <button aria-label="Open regex builder for this search" style="height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid #c3c6cf; background: #f8f9ff; font: 500 13px 'Roboto Mono', monospace; color: #36618e; cursor: pointer">.*</button>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; color: #43474e; line-height: 1.35">
+      <span>Version 0.1.0</span>
+      <span>Updated 2026-11-15 14:50:12 EST</span>
+    </div>
+  </header>
+
+  <div style="display: flex; align-items: flex-end; gap: 2px; padding: 6px 20px 0; background: #eceef4; overflow-x: auto">
+    <div style="display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 10px 10px 0 0; background: #f8f9ff; font-size: 14px; font-weight: 500">
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #ba1a1a"></span>Home lab · example.com
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; font-size: 14px; color: #43474e">
+      <span style="width: 8px; height: 8px; border-radius: 4px; background: #2e6b3a"></span>Office · corp.example.net
+    </div>
+    <button aria-label="New tab" style="width: 38px; height: 34px; border: 0; background: none; font-size: 22px; color: #43474e; cursor: pointer">+</button>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; flex: 1">
+    <nav aria-label="Main" style="display: flex; flex-direction: column; gap: 6px; width: 88px; padding: 14px 4px; background: #f8f9ff; border-right: 1px solid #e0e2ec">
+      <button class="rail-item" aria-current="page"><span class="rail-pill" style="background: #d1e4ff"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h4l2-6 4 12 2-6h4" stroke="#001d36" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></span><span style="color: #001d36">Diagnose</span></button>
+      <button class="rail-item"><span class="rail-pill"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l4 4-8 8H6v-4z" stroke="#43474e" stroke-width="2" fill="none" stroke-linejoin="round"></path></svg></span>Fixes</button>
+      <button class="rail-item"><span class="rail-pill"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="#43474e" stroke-width="2" fill="none"></circle><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16" stroke="#43474e" stroke-width="1.6" fill="none"></path></svg></span>DNS</button>
+      <button class="rail-item"><span class="rail-pill"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c3-8 15-8 18 0" stroke="#43474e" stroke-width="2" fill="none" stroke-linecap="round"></path><path d="M3 16h18" stroke="#43474e" stroke-width="2"></path></svg></span>Tunnels</button>
+      <button class="rail-item"><span class="rail-pill"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="#43474e" stroke-width="2" fill="none"></circle><path d="M12 8v4l3 2" stroke="#43474e" stroke-width="2" fill="none" stroke-linecap="round"></path></svg></span>History</button>
+      <button class="rail-item"><span class="rail-pill"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="#43474e" stroke-width="2" fill="none"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke="#43474e" stroke-width="2" stroke-linecap="round"></path></svg></span>Settings</button>
+    </nav>
+
+    <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-wrap: wrap; gap: 20px; padding: 24px">
+      <section style="flex: 3 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px">
+          <div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 6px">
+            <label for="host" style="font-size: 13px; font-weight: 500; color: #43474e">Hostname to check</label>
+            <input id="host" value="ha.example.com" class="mono" style="height: 48px; padding: 0 14px; border-radius: 8px; border: 1px solid #73777f; background: #fff; font-size: 16px; color: #191c20">
+          </div>
+          <button class="btn" style="background: #36618e; color: #fff">Run all checks</button>
+        </div>
+
+        <div role="status" style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; background: #ffdad6; color: #410002">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#ba1a1a"></circle><path d="M12 7v6M12 16.5v.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></path></svg>
+          <span style="font-size: 15px"><b style="font-weight: 600">2 problems found.</b> Visitors cannot reach ha.example.com because public DNS hands out a private address.</span>
+        </div>
+
+        <ul aria-label="Check results" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-radius: 12px; background: #fff; border: 1px solid #e0e2ec; overflow: hidden">
+          <sc-for list="{{checks}}" as="c" hint-placeholder-count="8">
+            <li>
+              <button onClick="{{c.pick}}" style="{{c.rowStyle}}">
+                <span style="{{c.badgeStyle}}">{{c.statusLabel}}</span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; text-align: left">
+                  <span style="font-size: 15px; font-weight: 500; color: #191c20">{{c.name}}</span>
+                  <span style="font-size: 13px; color: #43474e">{{c.summary}}</span>
+                </span>
+                <sc-if value="{{c.fixable}}" hint-placeholder-val="{{false}}"><span class="chip" style="background: #d1e4ff; color: #001d36">Fix available</span></sc-if>
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+      </section>
+
+      <aside aria-label="Check details" style="flex: 2 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: #eceef4; align-self: flex-start">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #43474e">Selected check</span>
+        <h2 style="margin: 0; font-size: 22px; font-weight: 500">{{sel.name}}</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #191c20">{{sel.detail}}</p>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <span style="font-size: 13px; font-weight: 500; color: #43474e">Evidence</span>
+          <pre class="mono" style="margin: 0; padding: 12px; border-radius: 8px; background: #fff; border: 1px solid #e0e2ec; font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; overflow-x: auto">{{sel.evidence}}</pre>
+        </div>
+        <sc-if value="{{sel.fixable}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; background: #fff">
+            <span style="font-size: 13px; font-weight: 500; color: #43474e">Suggested fix</span>
+            <span style="font-size: 15px">{{sel.fix}}</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <a href="FixPreview.dc.html" class="btn" style="background: #36618e; color: #fff; text-decoration: none">Preview fix</a>
+              <button class="btn" style="background: none; color: #36618e; border: 1px solid #73777f">Copy as command</button>
+            </div>
+          </div>
+        </sc-if>
+      </aside>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { picked: 'proxy' }; }
+  renderVals() {
+    const tone = {
+      fail: { label: 'Fail', bg: '#ffdad6', fg: '#410002' },
+      warn: { label: 'Warn', bg: '#ffdcbe', fg: '#2c1600' },
+      pass: { label: 'Pass', bg: '#b7f1b9', fg: '#002107' }
+    };
+    const raw = [
+      { id: 'proxy', status: 'fail', name: 'Public DNS answer', summary: 'Resolves to a private tunnel address, not the edge', fixable: true,
+        detail: 'The hostname points at the tunnel with the proxy switched off. A tunnel target only works when the record is proxied, so browsers receive a private IPv6 address they cannot reach.',
+        evidence: 'resolver 1.1.1.1\nha.example.com  CNAME  <tunnel-id>.cfargotunnel.com\n<tunnel-id>.cfargotunnel.com  AAAA  fd10:aec2:5dae::\nA record: none',
+        fix: 'Turn on the proxy for the ha CNAME record (proxied: false to true).' },
+      { id: 'zone', status: 'warn', name: 'Record in the zone', summary: 'No explicit record; a proxied wildcard covers it', fixable: true,
+        detail: 'The zone has no record for this name, so the wildcard answers. Public resolvers may still hold an older answer until its TTL expires.',
+        evidence: '*.example.com  CNAME  <tunnel-id>.cfargotunnel.com  proxied\nha.example.com  (no record)',
+        fix: 'Create an explicit proxied CNAME so the hostname no longer depends on the wildcard.' },
+      { id: 'tunnel', status: 'pass', name: 'Tunnel connector', summary: 'Healthy, 4 connections', fixable: false,
+        detail: 'The tunnel reports healthy with connections to four edge locations.', evidence: 'status: healthy\nconnections: 4\nversion: 2026.10.0', fix: '' },
+      { id: 'ingress', status: 'pass', name: 'Public hostname route', summary: 'Routes to http://192.0.2.10:8124', fixable: false,
+        detail: 'The tunnel configuration has an ingress rule for this hostname.', evidence: 'hostname: ha.example.com\nservice: http://192.0.2.10:8124', fix: '' },
+      { id: 'origin', status: 'pass', name: 'Origin reachable', summary: 'HTTP 200 in 38 ms', fixable: false,
+        detail: 'The origin service answers from this computer.', evidence: 'GET http://192.0.2.10:8124/\n200 OK  38 ms\n<title>Home Assistant</title>', fix: '' },
+      { id: 'proxies', status: 'pass', name: 'Home Assistant reverse proxy', summary: 'Forwarded headers accepted', fixable: false,
+        detail: 'A request with X-Forwarded-For is accepted, so trusted_proxies is set correctly.', evidence: 'GET / with X-Forwarded-For\n200 OK', fix: '' },
+      { id: 'cache', status: 'fail', name: 'This computer’s DNS cache', summary: 'Cache still holds the old answer', fixable: true,
+        detail: 'Public resolvers now return the edge address, but this computer cached the earlier answer.', evidence: 'system resolver: could not resolve\n8.8.8.8: 172.64.80.1', fix: 'Flush the local DNS cache.' },
+      { id: 'token', status: 'warn', name: 'Tunnel token exposure', summary: 'Token visible in the process command line', fixable: false,
+        detail: 'The connector was started with --token, so any local user can read it from the process list.', evidence: 'cloudflared tunnel run --token <redacted>', fix: '' }
+    ];
+    const checks = raw.map((c) => {
+      const t = tone[c.status];
+      const on = this.state.picked === c.id;
+      return { ...c, statusLabel: t.label,
+        badgeStyle: 'display:inline-flex;align-items:center;justify-content:center;width:56px;height:28px;border-radius:8px;font:600 13px Roboto Flex,sans-serif;background:' + t.bg + ';color:' + t.fg,
+        rowStyle: 'display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:10px 16px;border:0;border-bottom:1px solid #e0e2ec;cursor:pointer;background:' + (on ? '#d1e4ff' : '#fff'),
+        pick: () => this.setState({ picked: c.id }) };
+    });
+    return { checks, sel: checks.find((c) => c.id === this.state.picked) };
+  }
+}
+</script>
+</body>
+</html>

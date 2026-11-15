@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tunnel Doctor - Fix preview</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#36618e}a:hover{color:#1b4a76}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 20px;border-radius:20px;border:0;font:500 14px 'Roboto Flex',sans-serif;cursor:pointer;text-decoration:none}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; align-items: center; justify-content: center; padding: 40px 16px; box-sizing: border-box; background: rgba(25,28,32,.42); font-family: 'Roboto Flex', sans-serif; color: #191c20">
+  <div role="dialog" aria-modal="true" aria-labelledby="fix-title" style="width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 28px; background: #f8f9ff; box-shadow: 0 8px 28px rgba(0,0,0,.22)">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="font-size: 13px; font-weight: 500; color: #43474e">Fix · Public DNS answer</span>
+      <h1 id="fix-title" style="margin: 0; font-size: 24px; font-weight: 500">Turn on the proxy for ha.example.com</h1>
+    </div>
+    <p style="margin: 0; font-size: 15px; line-height: 1.55">Tunnel Doctor will make one change in your DNS zone. Nothing else is touched. You can undo it from History.</p>
+
+    <div style="display: flex; flex-direction: column; border-radius: 12px; border: 1px solid #e0e2ec; background: #fff; overflow: hidden">
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #e0e2ec; font-size: 13px; color: #43474e">
+        <span style="font-family: 'Roboto Mono', monospace">PATCH /zones/&lt;zone&gt;/dns_records/&lt;record&gt;</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); font-size: 14px">
+        <span style="padding: 10px 14px; font-weight: 500; color: #43474e">Field</span>
+        <span style="padding: 10px 14px; font-weight: 500; color: #43474e">Now</span>
+        <span style="padding: 10px 14px; font-weight: 500; color: #43474e">After</span>
+        <span style="padding: 10px 14px; border-top: 1px solid #e0e2ec">proxied</span>
+        <span style="padding: 10px 14px; border-top: 1px solid #e0e2ec; background: #ffdad6; color: #410002; font-family: 'Roboto Mono', monospace">false</span>
+        <span style="padding: 10px 14px; border-top: 1px solid #e0e2ec; background: #b7f1b9; color: #002107; font-family: 'Roboto Mono', monospace">true</span>
+        <span style="padding: 10px 14px; border-top: 1px solid #e0e2ec">ttl</span>
+        <span style="padding: 10px 14px; border-top: 1px solid #e0e2ec; font-family: 'Roboto Mono', monospace">300</span>
+        <span style="padding: 10px 14px; border-top: 1px solid #e0e2ec; font-family: 'Roboto Mono', monospace">auto</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; background: #eceef4">
+      <span style="font-size: 14px; font-weight: 500">Confirm with two keys</span>
+      <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; cursor: pointer">
+        <input type="checkbox" checked="{{keyOne}}" onChange="{{toggleOne}}" style="width: 20px; height: 20px; accent-color: #36618e">
+        I understand this changes live DNS for ha.example.com
+      </label>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <label for="confirm" style="font-size: 13px; color: #43474e">Type the hostname to confirm</label>
+        <input id="confirm" value="{{typed}}" onInput="{{onType}}" placeholder="ha.example.com" style="height: 44px; padding: 0 12px; border-radius: 8px; border: 1px solid #73777f; background: #fff; font: 400 15px 'Roboto Mono', monospace">
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px">
+      <a href="Main.dc.html" class="btn" style="background: none; color: #36618e">Cancel</a>
+      <button class="btn" disabled="{{locked}}" style="{{applyStyle}}">Apply fix</button>
+    </div>
+    <span role="status" style="font-size: 13px; color: #43474e">{{hint}}</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { one: false, typed: '' }; }
+  renderVals() {
+    const ready = this.state.one && this.state.typed.trim() === 'ha.example.com';
+    return {
+      keyOne: this.state.one,
+      typed: this.state.typed,
+      toggleOne: () => this.setState({ one: !this.state.one }),
+      onType: (e) => this.setState({ typed: e.target.value }),
+      locked: !ready,
+      applyStyle: ready ? 'background:#36618e;color:#fff' : 'background:#e0e2ec;color:#5b5f66;cursor:not-allowed',
+      hint: ready ? 'Both keys turned. Apply is ready.' : 'Apply unlocks after both confirmations.'
+    };
+  }
+}
+</script>
+</body>
+</html>

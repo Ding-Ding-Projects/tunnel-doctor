@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tunnel Doctor - Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#36618e}a:hover{color:#1b4a76}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column; background: #f8f9ff; color: #191c20; font-family: 'Roboto Flex', sans-serif">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid #e0e2ec">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 500">Settings</h1>
+    <div style="display: flex; flex: 1 1 320px; min-width: 0; align-items: center; gap: 8px; height: 44px; padding: 0 6px 0 16px; border-radius: 22px; background: #eceef4">
+      <label for="sq" style="position: absolute; left: -9999px">Search settings</label>
+      <input id="sq" placeholder="Search settings" style="flex: 1; min-width: 0; border: 0; background: none; font: 400 15px 'Roboto Flex', sans-serif; outline: none">
+      <button aria-label="Open regex builder for settings search" style="height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid #c3c6cf; background: #f8f9ff; font: 500 13px 'Roboto Mono', monospace; color: #36618e; cursor: pointer">.*</button>
+    </div>
+  </header>
+  <div style="display: flex; flex-wrap: wrap; flex: 1">
+    <nav aria-label="Settings groups" style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 2px; padding: 16px 12px; border-right: 1px solid #e0e2ec">
+      <sc-for list="{{groups}}" as="g" hint-placeholder-count="7">
+        <button onClick="{{g.go}}" style="{{g.style}}">{{g.name}}</button>
+      </sc-for>
+    </nav>
+    <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 24px clamp(16px, 4vw, 48px)">
+      <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 500">{{curName}}</h2>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; background: #fff; border: 1px solid #e0e2ec">
+          <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 15px; font-weight: 500">{{r.label}}</span>
+            <span style="font-size: 13px; line-height: 1.45; color: #43474e">{{r.help}}</span>
+          </div>
+          <span style="display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 8px; background: #eceef4; font-size: 14px; font-weight: 500">{{r.value}}</span>
+          <button aria-label="Reset this setting" style="height: 36px; padding: 0 12px; border-radius: 18px; border: 0; background: none; color: #36618e; font: 500 13px 'Roboto Flex', sans-serif; cursor: pointer">Reset</button>
+        </div>
+      </sc-for>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { g: 'lang' }; }
+  renderVals() {
+    const data = {
+      lang: { name: 'Language and voice', rows: [
+        { label: 'Language', help: 'English, Cantonese, or both side by side.', value: 'Both' },
+        { label: 'English funny level', help: '1 is fully serious, 5 is most playful. Errors stay plain at every level.', value: '5' },
+        { label: 'Cantonese funny level', help: 'Set separately from English.', value: '5' },
+        { label: 'Personal wording file', help: 'Load a local JSON file to rename words in the interface. Drop it anywhere on the window. It never leaves this computer.', value: 'No file' } ] },
+      look: { name: 'Appearance', rows: [
+        { label: 'Theme', help: 'Light, dark, or follow Windows.', value: 'System' },
+        { label: 'Accent colour', help: 'Any colour; contrast is checked before it applies.', value: '#36618E' },
+        { label: 'Text size', help: '100% to 200%. Layout reflows without clipping.', value: '100%' },
+        { label: 'Reduced motion', help: 'Follow Windows, or always reduce.', value: 'System' } ] },
+      acct: { name: 'Accounts and tokens', rows: [
+        { label: 'Cloudflare API token', help: 'Stored in the Windows credential vault. Replace or remove it here.', value: 'Saved' },
+        { label: 'Fixes need confirmation', help: 'Every change to live DNS or tunnels asks for two-key confirmation.', value: 'Always' } ] },
+      checks: { name: 'Checks', rows: [
+        { label: 'Public resolvers', help: 'Resolvers queried over HTTPS to compare answers.', value: '1.1.1.1, 8.8.8.8' },
+        { label: 'Origin timeout', help: 'How long to wait for the origin service.', value: '8 s' },
+        { label: 'Watch interval', help: 'Re-run checks in the background. Off by default.', value: 'Off' } ] },
+      sound: { name: 'Sound and notifications', rows: [
+        { label: 'Action sounds', help: 'Short sounds for finished checks and applied fixes.', value: 'On' },
+        { label: 'Notifications', help: 'Non-blocking toasts plus a notification centre.', value: 'On' } ] },
+      data: { name: 'History and data', rows: [
+        { label: 'Fix history', help: 'Every applied fix is recorded locally with an undo.', value: 'Keep 500' },
+        { label: 'Export', help: 'Export results and history as JSON, CSV, Markdown or HTML.', value: 'Export' } ] },
+      about: { name: 'About', rows: [
+        { label: 'Version', help: 'Read from the build that is running.', value: '0.1.0' },
+        { label: 'Updates', help: 'Checks the project releases feed.', value: 'Up to date' } ] }
+    };
+    const ids = Object.keys(data);
+    const groups = ids.map((id) => ({ name: data[id].name, go: () => this.setState({ g: id }),
+      style: 'display:flex;align-items:center;min-height:48px;padding:0 16px;border:0;border-radius:24px;text-align:left;cursor:pointer;font:500 14px Roboto Flex,sans-serif;color:#191c20;background:' + (this.state.g === id ? '#d1e4ff' : 'transparent') }));
+    return { groups, rows: data[this.state.g].rows, curName: data[this.state.g].name };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tunnel Doctor - Project site</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#36618e}a:hover{color:#1b4a76}
+</style>
+</helmet>
+<div style="display: flex; flex-direction: column; background: #f8f9ff; color: #191c20; font-family: 'Roboto Flex', sans-serif">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; padding: 16px clamp(16px, 5vw, 64px); border-bottom: 1px solid #e0e2ec">
+    <span style="font-size: 18px; font-weight: 600">Tunnel Doctor</span>
+    <nav aria-label="Site" style="display: flex; flex-wrap: wrap; gap: 4px 20px; flex: 1; font-size: 15px">
+      <a href="#features">Features</a><a href="#docs">Documentation</a><a href="#download">Download</a><a href="#settings">Site settings</a>
+    </nav>
+    <span style="font-size: 13px; color: #43474e">0.1.0 · updated 2026-11-15 14:50:12 EST</span>
+  </header>
+
+  <section style="display: flex; flex-wrap: wrap; align-items: center; gap: 48px; padding: 72px clamp(16px, 5vw, 64px) 56px">
+    <div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 20px; max-width: 560px">
+      <h1 style="margin: 0; font-size: clamp(36px, 5vw, 56px); line-height: 1.08; font-weight: 600">Find out why your tunnel hostname is down, then fix it.</h1>
+      <p style="margin: 0; font-size: 18px; line-height: 1.55; color: #43474e">A Windows app that checks public DNS, your Cloudflare zone, the tunnel route and the service behind it, names the one thing that is wrong, and fixes it after you confirm.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px">
+        <a href="#download" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 24px; background: #36618e; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none">Download for Windows</a>
+        <a href="#docs" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 24px; border: 1px solid #73777f; font-size: 16px; font-weight: 500; text-decoration: none">Read the guide</a>
+      </div>
+      <p style="margin: 0; font-size: 13px; color: #43474e">This site describes and downloads the app. It is not the app itself.</p>
+    </div>
+    <figure style="flex: 1 1 460px; min-width: 0; margin: 0; display: flex; flex-direction: column; border-radius: 16px; background: #fff; border: 1px solid #e0e2ec; box-shadow: 0 12px 40px rgba(25,28,32,.10); overflow: hidden">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #ffdad6; color: #410002; font-size: 14px">
+        <b style="font-weight: 600">Public DNS answer · Fail</b>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px">
+        <span style="font-family: 'Roboto Mono', monospace; font-size: 13px; line-height: 1.6; color: #43474e">ha.example.com CNAME tunnel<br>AAAA fd10:aec2:5dae:: (private)</span>
+        <span style="font-size: 15px">Turn on the proxy for this record.</span>
+        <span style="display: inline-flex; align-self: flex-start; align-items: center; height: 36px; padding: 0 16px; border-radius: 18px; background: #36618e; color: #fff; font-size: 14px; font-weight: 500">Preview fix</span>
+      </div>
+      <figcaption style="padding: 10px 18px; border-top: 1px solid #e0e2ec; font-size: 12px; color: #43474e">Illustration. The real app screenshots are in the gallery.</figcaption>
+    </figure>
+  </section>
+
+  <section id="features" style="display: flex; flex-direction: column; gap: 24px; padding: 56px clamp(16px, 5vw, 64px); background: #eceef4">
+    <h2 style="margin: 0; font-size: 30px; font-weight: 600">What it checks and fixes</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px">
+      <sc-for list="{{features}}" as="f" hint-placeholder-count="8">
+        <article style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 16px; background: #fff">
+          <h3 style="margin: 0; font-size: 17px; font-weight: 600">{{f.t}}</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #43474e">{{f.d}}</p>
+          <a href="#docs" style="margin-top: auto; font-size: 14px; font-weight: 500">Read the article</a>
+        </article>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="download" style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 56px clamp(16px, 5vw, 64px)">
+    <div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-size: 30px; font-weight: 600">Download</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #43474e">Windows 10 and 11, 64-bit. The installer is not code-signed, so Windows shows an unknown-publisher warning the first time.</p>
+    </div>
+    <a href="#" style="display: inline-flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 24px; background: #36618e; color: #fff; font-size: 16px; font-weight: 500; text-decoration: none">Setup.exe from the latest release</a>
+  </section>
+
+  <footer style="padding: 24px clamp(16px, 5vw, 64px); border-top: 1px solid #e0e2ec; font-size: 13px; color: #43474e">Not affiliated with Cloudflare or Home Assistant. MIT licence.</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1920}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { features: [
+      { t: 'Unproxied tunnel records', d: 'Spots a CNAME to a tunnel with the proxy off, which hands browsers a private address, and turns the proxy on.' },
+      { t: 'Missing hostname records', d: 'Finds a tunnel route with no DNS record, or one only covered by a wildcard, and creates the record.' },
+      { t: 'Stale resolver answers', d: 'Compares public resolvers with this computer and flushes the local cache when it is behind.' },
+      { t: 'Tunnel connector health', d: 'Reads the tunnel status and connection count, and explains inactive or degraded tunnels.' },
+      { t: 'Origin reachability', d: 'Checks the service behind the tunnel answers, and tells refused, unreachable and timed-out apart.' },
+      { t: 'Home Assistant 400 errors', d: 'Detects a reverse-proxy request being rejected and gives the exact trusted_proxies settings.' },
+      { t: 'SSL mode loops', d: 'Warns when the zone SSL mode can cause redirect loops or 525 errors for the origin.' },
+      { t: 'Token exposure', d: 'Warns when a tunnel token is visible in a process command line and shows a safer setup.' }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

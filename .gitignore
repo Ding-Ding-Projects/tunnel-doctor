@@ -1,0 +1,7 @@
+node_modules/
+out/
+dist/
+.agent/
+*.log
+appliance/build/
+web/build-meta.json

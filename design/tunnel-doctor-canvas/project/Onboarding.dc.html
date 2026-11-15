@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tunnel Doctor - First-run setup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#36618e}a:hover{color:#1b4a76}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 20px;border-radius:20px;border:0;font:500 14px 'Roboto Flex',sans-serif;cursor:pointer;text-decoration:none}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-wrap: wrap; background: #f8f9ff; color: #191c20; font-family: 'Roboto Flex', sans-serif">
+  <nav aria-label="Setup steps" style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 4px; padding: 40px 24px; background: #eceef4">
+    <span style="font-size: 22px; font-weight: 600; margin-bottom: 20px">Set up Tunnel Doctor</span>
+    <sc-for list="{{steps}}" as="s" hint-placeholder-count="5">
+      <button onClick="{{s.go}}" style="{{s.style}}">
+        <span style="{{s.dotStyle}}">{{s.mark}}</span>
+        <span style="display: flex; flex-direction: column; text-align: left">
+          <span style="font-size: 15px; font-weight: 500">{{s.title}}</span>
+          <span style="font-size: 12px; color: #43474e">{{s.state}}</span>
+        </span>
+      </button>
+    </sc-for>
+  </nav>
+
+  <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 22px; padding: 48px clamp(16px, 5vw, 72px)">
+    <span style="font-size: 13px; font-weight: 500; color: #43474e">Step {{num}} of 5</span>
+    <h1 style="margin: 0; font-size: 30px; font-weight: 500">{{cur.title}}</h1>
+    <p style="margin: 0; max-width: 620px; font-size: 16px; line-height: 1.55">{{cur.body}}</p>
+
+    <sc-if value="{{isToken}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 560px">
+        <label for="tok" style="font-size: 13px; font-weight: 500; color: #43474e">API token</label>
+        <input id="tok" type="password" value="************************" style="height: 48px; padding: 0 14px; border-radius: 8px; border: 1px solid #73777f; background: #fff; font: 400 16px 'Roboto Mono', monospace">
+        <span style="font-size: 13px; color: #43474e">Stored only in the Windows credential vault. Needs Zone · DNS · Edit and Account · Cloudflare Tunnel · Read.</span>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #b7f1b9; color: #002107">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#002107" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="font-size: 14px">Token works. Found 1 account and 2 zones.</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 24px">
+      <button onClick="{{back}}" class="btn" style="background: none; color: #36618e; border: 1px solid #73777f">Back</button>
+      <button onClick="{{next}}" class="btn" style="background: #36618e; color: #fff">{{nextLabel}}</button>
+      <button onClick="{{next}}" class="btn" style="background: none; color: #36618e">Skip this step</button>
+      <span style="flex: 1"></span>
+      <button class="btn" style="background: none; color: #43474e">Save and finish later</button>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { at: 1 }; }
+  renderVals() {
+    const info = [
+      { title: 'Language and voice', body: 'Choose English, Cantonese or both side by side, and how playful the wording should be. Facts and errors always stay plain.' },
+      { title: 'Connect your Cloudflare account', body: 'Paste an API token so Tunnel Doctor can read your zones and tunnels and apply fixes you approve. Read-only tokens work too; fixes then stay as copyable steps.' },
+      { title: 'Choose a hostname to watch', body: 'Pick a hostname from your zones. Tunnel Doctor checks public DNS, the tunnel route and the origin behind it.' },
+      { title: 'Add the origin service', body: 'Optional. Give the local address of the service, such as Home Assistant, so the origin and reverse-proxy checks can run.' },
+      { title: 'Run the first check', body: 'Run every check once. You land in the Diagnose workspace with the results.' }
+    ];
+    const at = this.state.at;
+    const steps = info.map((s, i) => {
+      const n = i + 1, done = n < at, on = n === at;
+      return { ...s, mark: done ? '✓' : String(n), state: done ? 'Done' : on ? 'In progress' : 'Not started',
+        style: 'display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px;border:0;border-radius:28px;cursor:pointer;color:#191c20;font-family:Roboto Flex,sans-serif;background:' + (on ? '#d1e4ff' : 'transparent'),
+        dotStyle: 'display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:14px;font:600 13px Roboto Flex,sans-serif;' + (done || on ? 'background:#36618e;color:#fff' : 'background:#e0e2ec;color:#43474e'),
+        go: () => this.setState({ at: n }) };
+    });
+    return { steps, cur: info[at - 1], num: at, isToken: at === 2,
+      nextLabel: at === 5 ? 'Run checks and finish' : 'Next',
+      next: () => this.setState({ at: Math.min(5, at + 1) }),
+      back: () => this.setState({ at: Math.max(1, at - 1) }) };
+  }
+}
+</script>
+</body>
+</html>
