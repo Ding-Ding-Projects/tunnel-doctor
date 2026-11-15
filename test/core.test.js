@@ -34,6 +34,7 @@ function fakeNet(overrides = {}) {
     }
     if (u.host === 'ha.example.com') {
       if (!state.proxied) throw Object.assign(new TypeError('fetch failed'), { cause: { code: 'ENOTFOUND' } });
+      if (state.edgeRejects) return new Response('400: Bad Request', { status: 400 });
       return new Response('<title>Home Assistant</title>', { status: 200 });
     }
     if (u.host === '192.0.2.10:8124') {
@@ -78,10 +79,18 @@ test('the proxy fix needs both confirmation keys, applies, and undoes', async ()
   assert.equal(net.state.proxied, false);
 });
 
-test('flags Home Assistant rejecting forwarded headers', async () => {
-  const net = fakeNet({ proxied: true, haRejectsForwarded: true });
-  const report = await runChecks({ hostname: 'ha.example.com', token: 't', fetchImpl: net.impl, capabilities: {} });
-  assert.equal(byId(report, 'ha-proxy').code, 'ha.forwarded-rejected');
+test('flags Home Assistant rejecting forwarded headers only when the public path fails too', async () => {
+  const broken = fakeNet({ proxied: true, haRejectsForwarded: true, edgeRejects: true });
+  const bad = await runChecks({ hostname: 'ha.example.com', token: 't', fetchImpl: broken.impl, capabilities: {} });
+  assert.equal(byId(bad, 'ha-proxy').code, 'ha.forwarded-rejected');
+  assert.equal(byId(bad, 'edge-http').code, 'edge.400');
+
+  // Seen against a real instance: the tunnel path works, and Home Assistant
+  // still rejects forwarded headers sent from a computer it does not trust.
+  const fine = fakeNet({ proxied: true, haRejectsForwarded: true });
+  const ok = await runChecks({ hostname: 'ha.example.com', token: 't', fetchImpl: fine.impl, capabilities: {} });
+  assert.equal(byId(ok, 'ha-proxy').code, 'ha.untrusted-here');
+  assert.equal(byId(ok, 'ha-proxy').status, 'pass');
 });
 
 test('local cache check flags a stale system resolver and offers a flush', async () => {

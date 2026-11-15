@@ -94,6 +94,8 @@ const R = {
   'origin.tls': { en: () => 'TLS handshake with the origin failed', yue: () => '同源站 TLS 握手失敗' },
   'origin.other': { en: () => 'Request to the origin failed', yue: () => '請求源站失敗' },
   'ha.ok': { en: () => 'Forwarded requests are accepted', yue: () => '轉發請求接受' },
+  'ha.untrusted-here': { en: () => 'The public path works. Home Assistant rejects forwarded requests from this computer only because it is not a trusted proxy, which is correct.', yue: () => '公開路徑正常。Home Assistant 拒絕呢部電腦嘅轉發請求，只係因為佢唔係受信任代理，咁係啱嘅。' },
+  'ha.forwarded-rejected-unconfirmed': { en: () => 'Home Assistant rejects forwarded requests from this computer. Check that trusted_proxies lists the tunnel connector’s address.', yue: () => 'Home Assistant 拒絕呢部電腦嘅轉發請求。睇吓 trusted_proxies 有冇包隧道連接器嘅地址。' },
   'ha.forwarded-rejected': { en: () => 'Home Assistant rejects forwarded requests: set use_x_forwarded_for and trusted_proxies', yue: () => 'Home Assistant 拒絕轉發請求：要設定 use_x_forwarded_for 同 trusted_proxies' },
   'local.ok': { en: () => 'This computer resolves it the same as public DNS', yue: () => '呢部電腦解析結果同公共 DNS 一樣' },
   'local.stale': { en: () => 'This computer still holds an old answer in its DNS cache', yue: () => '呢部電腦 DNS 快取仲係舊答案' },

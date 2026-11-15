@@ -212,12 +212,14 @@ function closeTab(id) {
   if (S.activeTab === id) S.activeTab = S.tabs[0]?.id || null;
   guarded(persistTabs).then(render);
 }
-function openHostnameTab(hostname, originUrl = '') {
+async function openHostnameTab(hostname, originUrl = '') {
   const existing = S.tabs.find((t) => t.hostname === hostname);
-  if (existing) { S.activeTab = existing.id; S.view = 'diagnose'; return render(); }
+  if (existing) { existing.originUrl = originUrl || existing.originUrl; S.activeTab = existing.id; S.view = 'diagnose'; render(); return existing; }
   const t = { id: crypto.randomUUID(), label: hostname, hostname, originUrl };
   S.tabs.push(t); S.activeTab = t.id; S.view = 'diagnose';
-  guarded(persistTabs).then(render);
+  await guarded(persistTabs);
+  render();
+  return t;
 }
 
 // ---------- diagnose ----------
@@ -227,6 +229,7 @@ function diagnoseView() {
   const tab = S.tabs.find((t) => t.id === S.activeTab);
   const rep = tab && S.reports[tab.id];
   const form = h('form', { class: 'form-row', onSubmit: (e) => { e.preventDefault(); runChecks(); } },
+    // The fields below are read by runChecks() when it is called without arguments.
     h('div', { class: 'field' }, h('label', { for: 'host' }, P('hostname')), h('input', { id: 'host', class: 'mono', required: true, value: tab?.hostname || '', placeholder: 'ha.example.com', autocomplete: 'off' })),
     h('div', { class: 'field' }, h('label', { for: 'origin' }, P('origin')), h('input', { id: 'origin', class: 'mono', value: tab?.originUrl || '', placeholder: 'http://homeassistant.local:8123' }), h('span', { class: 'help' }, P('originHelp'))),
     h('button', { id: 'run-btn', class: 'btn filled', type: 'submit', disabled: S.busy }, S.busy ? L('running') : L('run')));
@@ -253,11 +256,12 @@ function diagnoseView() {
         h('div', { class: 'row-wrap' }, h('button', { class: 'btn filled', onClick: () => openFix(sel.fix), disabled: sel.fix.id === 'flush-dns' && !S.caps.localDns }, L('previewFix')))) : null));
 }
 
-async function runChecks() {
-  const hostname = document.getElementById('host').value.trim().toLowerCase();
-  const originUrl = document.getElementById('origin').value.trim();
+async function runChecks(hostArg, originArg) {
+  const hostname = (hostArg ?? document.getElementById('host')?.value ?? '').trim().toLowerCase();
+  const originUrl = (originArg ?? document.getElementById('origin')?.value ?? '').trim();
+  if (!hostname) return;
   let tab = S.tabs.find((t) => t.id === S.activeTab);
-  if (!tab || tab.hostname !== hostname) { openHostnameTab(hostname, originUrl); tab = S.tabs.find((t) => t.hostname === hostname); }
+  if (!tab || tab.hostname !== hostname) tab = await openHostnameTab(hostname, originUrl);
   tab.originUrl = originUrl;
   S.busy = true; render();
   await guarded(async () => {
@@ -445,7 +449,7 @@ function onboardingView() {
   ][at - 1]();
   const finish = () => guarded(async () => {
     S.settings = await api.updateSettings({ onboardingDone: true });
-    if (S.ob.hostname) { openHostnameTab(S.ob.hostname, S.ob.originUrl); setTimeout(runChecks, 0); } else render();
+    if (S.ob.hostname) { await openHostnameTab(S.ob.hostname, S.ob.originUrl); await runChecks(S.ob.hostname, S.ob.originUrl); } else render();
   });
   return h('div', { class: 'wizard' },
     h('nav', { 'aria-label': 'Setup steps' }, h('h1', { style: 'margin:0 0 20px;font-size:1.375rem' }, 'Set up Tunnel Doctor'),

@@ -180,8 +180,14 @@ export async function runChecks(ctx, onResult = () => {}) {
     else {
       const fwd = await probe(originUrl, { fetchImpl, timeoutMs, headers: { 'x-forwarded-for': '203.0.113.7', 'x-forwarded-proto': 'https', 'x-forwarded-host': hostname } });
       const ev = [`plain: HTTP ${plain.status}`, `with X-Forwarded-For: ${fwd.ok ? 'HTTP ' + fwd.status : fwd.message}`];
-      if (fwd.ok && fwd.status === 400) emit(r('ha-proxy', 'fail', 'ha.forwarded-rejected', { hostname }, ev));
-      else emit(r('ha-proxy', 'pass', 'ha.ok', {}, ev));
+      // Home Assistant rejects X-Forwarded-For from any address it does not
+      // trust, including this computer. So a 400 here only proves a problem
+      // when the public path through the tunnel fails the same way.
+      if (fwd.ok && fwd.status === 400) {
+        if (state.edgeStatus === 400) emit(r('ha-proxy', 'fail', 'ha.forwarded-rejected', { hostname }, ev));
+        else if (state.edgeStatus && state.edgeStatus < 400) emit(r('ha-proxy', 'pass', 'ha.untrusted-here', { hostname }, ev));
+        else emit(r('ha-proxy', 'warn', 'ha.forwarded-rejected-unconfirmed', { hostname }, ev));
+      } else emit(r('ha-proxy', 'pass', 'ha.ok', {}, ev));
     }
   }
 
